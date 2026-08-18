@@ -9,9 +9,12 @@ use App\Http\Resources\LaporanKeuanganResource;
 use App\Models\LaporanKeuangan;
 use App\Services\DividenCalculatorService;
 use Illuminate\Http\JsonResponse;
+use App\Traits\ApiResponse;
 
 class LaporanKeuanganController extends Controller
 {
+    use ApiResponse;
+
     public function __construct(
         private DividenCalculatorService $dividenService
     ) {}
@@ -25,10 +28,7 @@ class LaporanKeuanganController extends Controller
         
         $laporan = LaporanKeuangan::create($data);
         
-        return response()->json([
-            'message' => 'Laporan keuangan berhasil dikirim.',
-            'data' => new LaporanKeuanganResource($laporan)
-        ], 201);
+        return $this->successResponse(new LaporanKeuanganResource($laporan), 'Laporan keuangan berhasil dikirim.', 201);
     }
 
     public function verify(VerifyLaporanKeuanganRequest $request, string $id): JsonResponse
@@ -48,16 +48,11 @@ class LaporanKeuanganController extends Controller
             } catch (\Exception $e) {
                 // Log error jika pembagian dividen gagal, tapi laporan tetap verified
                 \Illuminate\Support\Facades\Log::error('Dividen gagal dibagikan: ' . $e->getMessage());
-                return response()->json([
-                    'message' => 'Laporan diverifikasi, namun bagi hasil gagal: ' . $e->getMessage(),
-                    'data' => new LaporanKeuanganResource($laporan->fresh())
-                ], 500);
+                return $this->errorResponse('Laporan diverifikasi, namun bagi hasil gagal: ' . $e->getMessage(), 500, new LaporanKeuanganResource($laporan->fresh()));
             }
         }
 
-        return response()->json([
-            'message' => 'Laporan keuangan berhasil diverifikasi' . ($request->status_verifikasi === 'VERIFIED' ? ' dan dividen telah didistribusikan.' : '.'),
-            'data' => new LaporanKeuanganResource($laporan->fresh())
-        ]);
+        $msg = 'Laporan keuangan berhasil diverifikasi' . ($request->status_verifikasi === 'VERIFIED' ? ' dan dividen telah didistribusikan.' : '.');
+        return $this->successResponse(new LaporanKeuanganResource($laporan->fresh()), $msg);
     }
 }

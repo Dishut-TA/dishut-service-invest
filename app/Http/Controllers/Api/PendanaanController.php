@@ -9,9 +9,12 @@ use App\Services\PendanaanService;
 use App\Models\TransaksiPendanaan;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use App\Traits\ApiResponse;
 
 class PendanaanController extends Controller
 {
+    use ApiResponse;
+
     public function __construct(
         private PendanaanService $pendanaanService
     ) {}
@@ -22,12 +25,9 @@ class PendanaanController extends Controller
             $investorId = $request->user_id; // Dari middleware / token
             $transaksi = $this->pendanaanService->initializePayment($request->validated(), $investorId);
             
-            return response()->json([
-                'message' => 'Transaksi pendanaan berhasil diinisialisasi. Lanjutkan ke pembayaran.',
-                'data' => new TransaksiPendanaanResource($transaksi)
-            ], 201);
+            return $this->successResponse(new TransaksiPendanaanResource($transaksi), 'Transaksi pendanaan berhasil diinisialisasi. Lanjutkan ke pembayaran.', 201);
         } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 400);
+            return $this->errorResponse($e->getMessage(), 400);
         }
     }
 
@@ -39,9 +39,9 @@ class PendanaanController extends Controller
         
         try {
             $this->pendanaanService->handlePaymentSuccess($transaksi);
-            return response()->json(['message' => 'Webhook berhasil diproses.']);
+            return $this->successResponse(null, 'Webhook berhasil diproses.');
         } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
+            return $this->errorResponse($e->getMessage(), 500);
         }
     }
 }

@@ -10,50 +10,51 @@ use App\Models\ProgramInvestasi;
 use App\Services\ProgramInvestasiService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use App\Traits\ApiResponse;
 
 class ProgramInvestasiController extends Controller
 {
+    use ApiResponse;
+
     public function __construct(
         private ProgramInvestasiService $programService
     ) {}
 
-    public function index(Request $request)
+    public function index(Request $request): JsonResponse
     {
-        // Publik/Investor: Hanya tampilkan yang ACTIVE atau FUNDED
         $query = ProgramInvestasi::whereIn('status', ['ACTIVE', 'FUNDED', 'COMPLETED'])
                     ->with(['milestones', 'dokumens']);
         
-        return new ProgramInvestasiCollection($query->paginate(10));
+        // Menggunakan get_object_vars / response()->getData untuk menjaga format pagination
+        $collection = new ProgramInvestasiCollection($query->paginate(10));
+        return $this->successResponse($collection->response()->getData(true), 'Berhasil mengambil daftar program investasi');
     }
 
-    public function indexKth(Request $request)
+    public function indexKth(Request $request): JsonResponse
     {
-        // KTH: Tampilkan semua program milik user tersebut
-        $userId = $request->user_id; // Dari middleware / token
+        $userId = $request->user_id;
         $query = ProgramInvestasi::where('user_id', $userId)
                     ->with(['milestones', 'dokumens']);
         
-        return new ProgramInvestasiCollection($query->paginate(10));
+        $collection = new ProgramInvestasiCollection($query->paginate(10));
+        return $this->successResponse($collection->response()->getData(true), 'Berhasil mengambil daftar program KTH');
     }
 
-    public function show(string $id)
+    public function show(string $id): JsonResponse
     {
         $program = ProgramInvestasi::with(['milestones', 'dokumens'])->findOrFail($id);
-        return new ProgramInvestasiResource($program);
+        return $this->successResponse(new ProgramInvestasiResource($program), 'Berhasil mengambil detail program');
     }
 
     public function store(StoreProgramInvestasiRequest $request): JsonResponse
     {
         try {
-            $userId = $request->user_id; // Dari middleware / token
+            $userId = $request->user_id;
             $program = $this->programService->createProgram($request->validated(), $userId);
             
-            return response()->json([
-                'message' => 'Program investasi berhasil diajukan.',
-                'data' => new ProgramInvestasiResource($program)
-            ], 201);
+            return $this->successResponse(new ProgramInvestasiResource($program), 'Program investasi berhasil diajukan.', 201);
         } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
+            return $this->errorResponse($e->getMessage(), 500);
         }
     }
 }

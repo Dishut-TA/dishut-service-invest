@@ -9,9 +9,12 @@ use App\Http\Resources\LaporanProyekResource;
 use App\Models\LaporanProyek;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
+use App\Traits\ApiResponse;
 
 class LaporanProyekController extends Controller
 {
+    use ApiResponse;
+
     public function store(StoreLaporanProyekRequest $request): JsonResponse
     {
         try {
@@ -31,12 +34,9 @@ class LaporanProyekController extends Controller
                 return $lap->load('dokumens');
             });
             
-            return response()->json([
-                'message' => 'Laporan progres berhasil dikirim.',
-                'data' => new LaporanProyekResource($laporan)
-            ], 201);
+            return $this->successResponse(new LaporanProyekResource($laporan), 'Laporan progres berhasil dikirim.', 201);
         } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
+            return $this->errorResponse($e->getMessage(), 500);
         }
     }
 
@@ -50,9 +50,6 @@ class LaporanProyekController extends Controller
             'catatan_verifikasi' => $request->catatan_verifikasi
         ]);
 
-        return response()->json([
-            'message' => 'Laporan progres berhasil diverifikasi.',
-            'data' => new LaporanProyekResource($laporan->load('dokumens'))
-        ]);
+        return $this->successResponse(new LaporanProyekResource($laporan->load('dokumens')), 'Laporan progres berhasil diverifikasi.');
     }
 }

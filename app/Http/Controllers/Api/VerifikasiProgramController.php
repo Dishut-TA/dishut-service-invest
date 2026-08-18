@@ -7,9 +7,12 @@ use App\Http\Requests\VerifyProgramRequest;
 use App\Http\Resources\ProgramInvestasiResource;
 use App\Models\ProgramInvestasi;
 use Illuminate\Http\JsonResponse;
+use App\Traits\ApiResponse;
 
 class VerifikasiProgramController extends Controller
 {
+    use ApiResponse;
+
     public function verify(VerifyProgramRequest $request, string $id): JsonResponse
     {
         $program = ProgramInvestasi::findOrFail($id);
@@ -19,9 +22,6 @@ class VerifikasiProgramController extends Controller
             'catatan_verifikasi' => $request->catatan_verifikasi
         ]);
 
-        return response()->json([
-            'message' => 'Status program investasi berhasil diupdate.',
-            'data' => new ProgramInvestasiResource($program)
-        ]);
+        return $this->successResponse(new ProgramInvestasiResource($program), 'Status program investasi berhasil diupdate.');
     }
 }

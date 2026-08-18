@@ -9,9 +9,12 @@ use App\Http\Resources\PenarikanDividenResource;
 use App\Models\PenarikanDividen;
 use App\Services\PenarikanService;
 use Illuminate\Http\JsonResponse;
+use App\Traits\ApiResponse;
 
 class PenarikanDividenController extends Controller
 {
+    use ApiResponse;
+
     public function __construct(
         private PenarikanService $penarikanService
     ) {}
@@ -22,12 +25,9 @@ class PenarikanDividenController extends Controller
             $investorId = $request->user_id; // Dari middleware / token
             $penarikan = $this->penarikanService->requestWithdrawal($request->validated(), $investorId);
             
-            return response()->json([
-                'message' => 'Permintaan penarikan dividen berhasil dibuat.',
-                'data' => new PenarikanDividenResource($penarikan)
-            ], 201);
+            return $this->successResponse(new PenarikanDividenResource($penarikan), 'Permintaan penarikan dividen berhasil dibuat.', 201);
         } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 400);
+            return $this->errorResponse($e->getMessage(), 400);
         }
     }
 
@@ -41,9 +41,6 @@ class PenarikanDividenController extends Controller
             'tanggal_proses' => now(),
         ]);
 
-        return response()->json([
-            'message' => 'Status penarikan dividen berhasil diupdate.',
-            'data' => new PenarikanDividenResource($penarikan)
-        ]);
+        return $this->successResponse(new PenarikanDividenResource($penarikan), 'Status penarikan dividen berhasil diupdate.');
     }
 }

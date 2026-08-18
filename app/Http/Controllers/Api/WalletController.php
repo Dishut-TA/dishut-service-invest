@@ -8,9 +8,12 @@ use App\Models\KthWallet;
 use App\Models\InvestorDividenWallet;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use App\Traits\ApiResponse;
 
 class WalletController extends Controller
 {
+    use ApiResponse;
+
     public function showKthWallet(Request $request): JsonResponse
     {
         $userId = $request->user_id; // Dari middleware (User KTH)
@@ -18,9 +21,7 @@ class WalletController extends Controller
         $wallet = KthWallet::with('mutasis')
                     ->firstOrCreate(['user_id' => $userId], ['saldo_tersedia' => 0]);
 
-        return response()->json([
-            'data' => new WalletResource($wallet)
-        ]);
+        return $this->successResponse(new WalletResource($wallet), 'Berhasil mengambil dompet KTH.');
     }
 
     public function showInvestorWallet(Request $request): JsonResponse
@@ -34,8 +35,6 @@ class WalletController extends Controller
         
         // Mutasi tidak ada pada model InvestorDividenWallet saat ini (bisa dikembangkan nanti)
         
-        return response()->json([
-            'data' => new WalletResource($wallet)
-        ]);
+        return $this->successResponse(new WalletResource($wallet), 'Berhasil mengambil dompet Investor.');
     }
 }
