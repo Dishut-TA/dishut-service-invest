@@ -23,6 +23,7 @@ return new class extends Migration
             $table->timestamp('batas_waktu_pengumpulan')->nullable();
             $table->text('deskripsi');
             $table->enum('status', ['DRAFT', 'WAITING_STAFF_VERIFICATION', 'REVISION', 'WAITING_HEAD_APPROVAL', 'ACTIVE', 'FUNDED', 'COMPLETED'])->default('DRAFT');
+            $table->text('catatan_verifikasi')->nullable();
             $table->timestamps();
         });
     }
