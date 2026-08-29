@@ -2,17 +2,18 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class KthWalletMutasi extends Model
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+
+class InvestorWalletMutasi extends Model
 {
     use HasFactory, HasUuids;
 
     protected $fillable = [
-        'kth_wallet_id',
+        'investor_wallet_id',
         'referensi_id',
         'tipe_mutasi',
         'nominal',
@@ -22,6 +23,6 @@ class KthWalletMutasi extends Model
 
     public function wallet(): BelongsTo
     {
-        return $this->belongsTo(KthWallet::class, 'kth_wallet_id');
+        return $this->belongsTo(InvestorDividenWallet::class, 'investor_wallet_id');
     }
 }

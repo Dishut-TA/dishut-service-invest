@@ -37,19 +37,23 @@ Route::middleware(['auth.jwt'])->group(function () {
         Route::post('/laporan-keuangan', [LaporanKeuanganController::class, 'store']);
         
         Route::get('/wallet', [WalletController::class, 'showKthWallet']);
+        Route::post('/wallet/topup', [WalletController::class, 'topupKthWallet']);
     });
 
     // === ROLE: INVESTOR ===
     Route::prefix('investor')->group(function () {
         Route::post('/pendanaan', [PendanaanController::class, 'store']);
+        Route::get('/riwayat-transaksi', [PendanaanController::class, 'riwayat']);
         Route::post('/penarikan-dividen', [PenarikanDividenController::class, 'store']);
         Route::get('/wallet', [WalletController::class, 'showInvestorWallet']);
+        Route::post('/wallet/topup', [WalletController::class, 'topupInvestorWallet']);
     });
 
     // === ROLE: BUPM STAFF & HEAD ===
     Route::prefix('bupm')->group(function () {
         Route::put('/programs/{id}/verify', [VerifikasiProgramController::class, 'verify']);
         Route::put('/laporan-proyek/{id}/verify', [LaporanProyekController::class, 'verify']);
+        Route::get('/laporan-keuangan/{id}/cetak', [LaporanKeuanganController::class, 'cetak']);
         Route::put('/laporan-keuangan/{id}/verify', [LaporanKeuanganController::class, 'verify']);
         Route::put('/penarikan-dividen/{id}/process', [PenarikanDividenController::class, 'process']);
     });
