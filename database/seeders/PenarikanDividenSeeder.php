@@ -27,6 +27,14 @@ class PenarikanDividenSeeder extends Seeder
 
             // Potong saldo sesuai penarikan
             $wallet->decrement('saldo_dividen', 100000);
+
+            // Simulasikan Mutasi Wallet Investor
+            \App\Models\InvestorWalletMutasi::create([
+                'investor_wallet_id' => $wallet->id,
+                'tipe_mutasi' => 'DEBIT',
+                'nominal' => 100000,
+                'keterangan' => 'Penarikan dividen ke rekening BCA',
+            ]);
         }
     }
 }

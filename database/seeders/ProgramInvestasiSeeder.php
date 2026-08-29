@@ -17,6 +17,8 @@ class ProgramInvestasiSeeder extends Seeder
             'user_id' => $kthId,
             'nama_program' => 'Penanaman Kopi Robusta Hutan Lindung',
             'kategori_usaha' => 'Agroforestri',
+            'gambar' => 'https://example.com/kopi-robusta.jpg',
+            'nama_kth' => 'KTH Maju Bersama',
             'target_dana' => 100000000,
             'dana_terkumpul' => 50000000, // Disimulasikan sudah ada pendanaan masuk
             'persentase_keuntungan' => 20.5,
