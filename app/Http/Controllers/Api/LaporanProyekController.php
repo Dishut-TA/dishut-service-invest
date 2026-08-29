@@ -21,17 +21,28 @@ class LaporanProyekController extends Controller
             $data = $request->validated();
             
             $laporan = DB::transaction(function () use ($data, $request) {
+                // Kalkulasi sisa_dana
+                $program = \App\Models\ProgramInvestasi::findOrFail($data['program_id']);
+                $previousLaporan = \App\Models\LaporanProyek::where('program_id', $data['program_id'])
+                    ->orderBy('created_at', 'desc')
+                    ->first();
+                
+                $saldoAwal = $previousLaporan ? $previousLaporan->sisa_dana : $program->dana_terkumpul;
+                $sisaDana = $saldoAwal - $data['dana_terpakai'];
+
                 $lap = LaporanProyek::create([
                     'program_id' => $data['program_id'],
                     'milestone_id' => $data['milestone_id'] ?? null,
                     'deskripsi_kemajuan' => $data['deskripsi_kemajuan'],
+                    'dana_terpakai' => $data['dana_terpakai'],
+                    'sisa_dana' => $sisaDana,
                 ]);
                 
                 if (!empty($data['dokumens'])) {
                     $lap->dokumens()->createMany($data['dokumens']);
                 }
                 
-                return $lap->load('dokumens');
+                return $lap->load(['program', 'milestone', 'dokumens']);
             });
             
             return $this->successResponse(new LaporanProyekResource($laporan), 'Laporan progres berhasil dikirim.', 201);
@@ -50,6 +61,6 @@ class LaporanProyekController extends Controller
             'catatan_verifikasi' => $request->catatan_verifikasi
         ]);
 
-        return $this->successResponse(new LaporanProyekResource($laporan->load('dokumens')), 'Laporan progres berhasil diverifikasi.');
+        return $this->successResponse(new LaporanProyekResource($laporan->load(['program', 'milestone', 'dokumens'])), 'Laporan progres berhasil diverifikasi.');
     }
 }

@@ -16,6 +16,8 @@ class LaporanProyek extends Model
         'program_id',
         'milestone_id',
         'deskripsi_kemajuan',
+        'dana_terpakai',
+        'sisa_dana',
         'status_verifikasi',
         'verified_by_staff_id',
         'catatan_verifikasi',

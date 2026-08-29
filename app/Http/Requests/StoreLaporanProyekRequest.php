@@ -26,6 +26,7 @@ class StoreLaporanProyekRequest extends FormRequest
             'program_id' => 'required|uuid|exists:program_investasis,id',
             'milestone_id' => 'nullable|uuid|exists:program_milestones,id',
             'deskripsi_kemajuan' => 'required|string',
+            'dana_terpakai' => 'required|numeric|min:0',
             
             'dokumens' => 'required|array|min:1',
             'dokumens.*.file_url' => 'required|string',
