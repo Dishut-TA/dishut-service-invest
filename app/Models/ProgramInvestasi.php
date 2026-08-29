@@ -13,6 +13,8 @@ class ProgramInvestasi extends Model
 
     protected $fillable = [
         'user_id',
+        'gambar',
+        'nama_kth',
         'nama_program',
         'kategori_usaha',
         'target_dana',

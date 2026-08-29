@@ -23,6 +23,8 @@ class StoreProgramInvestasiRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'gambar' => 'nullable|string|max:255',
+            'nama_kth' => 'nullable|string|max:255',
             'nama_program' => 'required|string|max:255',
             'kategori_usaha' => 'required|string|max:100',
             'target_dana' => 'required|numeric|min:1',
@@ -38,7 +40,7 @@ class StoreProgramInvestasiRequest extends FormRequest
             'milestones.*.target_tanggal' => 'required|date|after:today',
             
             'dokumens' => 'required|array|min:1',
-            'dokumens.*.tipe_dokumen' => 'required|in:COVER_IMAGE,PROPOSAL_BISNIS,LEGALITAS,TEMPLATE_PERJANJIAN',
+            'dokumens.*.tipe_dokumen' => 'required|string|max:100',
             'dokumens.*.file_url' => 'required|string', // Asumsi menggunakan string/URL
         ];
     }

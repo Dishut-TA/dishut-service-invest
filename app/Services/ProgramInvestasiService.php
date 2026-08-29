@@ -17,6 +17,8 @@ class ProgramInvestasiService
             // 1. Insert Program
             $program = ProgramInvestasi::create([
                 'user_id' => $userId, // Dari token JWT (service-user)
+                'nama_kth' => $data['nama_kth'] ?? null,
+                'gambar' => $data['gambar'] ?? null,
                 'nama_program' => $data['nama_program'],
                 'kategori_usaha' => $data['kategori_usaha'],
                 'target_dana' => $data['target_dana'],

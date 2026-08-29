@@ -17,6 +17,8 @@ class ProgramInvestasiResource extends JsonResource
         return [
             'id' => $this->id,
             'user_id' => $this->user_id, // Ref KTH
+            'gambar' => $this->gambar,
+            'nama_kth' => $this->nama_kth,
             'nama_program' => $this->nama_program,
             'kategori_usaha' => $this->kategori_usaha,
             'target_dana' => (float) $this->target_dana,
