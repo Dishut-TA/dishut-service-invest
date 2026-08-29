@@ -20,10 +20,16 @@ class LaporanKeuangan extends Model
         'total_pengeluaran',
         'laba_bersih',
         'bukti_nota_url',
+        'status',
         'status_verifikasi',
         'verified_by_staff_id',
         'catatan_verifikasi',
         'is_dividends_distributed',
+    ];
+
+    protected $casts = [
+        'total_pendapatan' => 'array',
+        'total_pengeluaran' => 'array',
     ];
 
     public function program(): BelongsTo
