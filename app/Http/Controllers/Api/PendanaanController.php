@@ -66,4 +66,15 @@ class PendanaanController extends Controller
             
         return $this->successResponse($riwayat, 'Berhasil mengambil riwayat transaksi investasi.');
     }
+
+    public function showRiwayat(Request $request, string $id): JsonResponse
+    {
+        $investorId = $request->user_id; // Dari middleware / token
+        
+        $transaksi = TransaksiPendanaan::with(['program'])
+            ->where('investor_id', $investorId)
+            ->findOrFail($id);
+            
+        return $this->successResponse(new TransaksiPendanaanResource($transaksi), 'Berhasil mengambil detail riwayat transaksi investasi.');
+    }
 }

@@ -44,6 +44,7 @@ Route::middleware(['auth.jwt'])->group(function () {
     Route::prefix('investor')->group(function () {
         Route::post('/pendanaan', [PendanaanController::class, 'store']);
         Route::get('/riwayat-transaksi', [PendanaanController::class, 'riwayat']);
+        Route::get('/riwayat-transaksi/{id}', [PendanaanController::class, 'showRiwayat']);
         Route::post('/penarikan-dividen', [PenarikanDividenController::class, 'store']);
         Route::get('/wallet', [WalletController::class, 'showInvestorWallet']);
         Route::post('/wallet/topup', [WalletController::class, 'topupInvestorWallet']);
