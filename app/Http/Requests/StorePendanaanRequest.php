@@ -26,6 +26,10 @@ class StorePendanaanRequest extends FormRequest
             'program_id' => 'required|uuid|exists:program_investasis,id',
             'nominal_pendanaan' => 'required|numeric|min:1',
             'metode_pembayaran' => 'required|string|max:100',
+            'nama' => 'nullable|string|max:255',
+            'email' => 'nullable|email|max:255',
+            'no_telp' => 'nullable|string|max:50',
+            'dokumen_url' => 'nullable|string',
         ];
     }
 }

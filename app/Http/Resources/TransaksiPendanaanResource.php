@@ -17,6 +17,10 @@ class TransaksiPendanaanResource extends JsonResource
         return [
             'id' => $this->id,
             'investor_id' => $this->investor_id,
+            'nama' => $this->nama,
+            'email' => $this->email,
+            'no_telp' => $this->no_telp,
+            'dokumen_url' => $this->dokumen_url,
             'program_id' => $this->program_id,
             'nominal_pendanaan' => (float) $this->nominal_pendanaan,
             'persentase_kepemilikan' => (float) $this->persentase_kepemilikan,

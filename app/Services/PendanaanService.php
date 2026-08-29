@@ -34,6 +34,10 @@ class PendanaanService
         // Buat record PENDING
         return TransaksiPendanaan::create([
             'investor_id' => $investorId,
+            'nama' => $data['nama'] ?? null,
+            'email' => $data['email'] ?? null,
+            'no_telp' => $data['no_telp'] ?? null,
+            'dokumen_url' => $data['dokumen_url'] ?? null,
             'program_id' => $program->id,
             'nominal_pendanaan' => $data['nominal_pendanaan'],
             'persentase_kepemilikan' => $persentase,

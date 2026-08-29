@@ -44,4 +44,26 @@ class PendanaanController extends Controller
             return $this->errorResponse($e->getMessage(), 500);
         }
     }
+
+    public function riwayat(Request $request): JsonResponse
+    {
+        $investorId = $request->user_id; // Dari middleware / token
+        
+        $riwayat = TransaksiPendanaan::with(['program'])
+            ->where('investor_id', $investorId)
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->map(function ($trx) {
+                return [
+                    'tanggal_bayar' => $trx->tanggal_bayar,
+                    'nama_investor' => $trx->nama,
+                    'nama_program_investasi' => $trx->program->nama_program ?? null,
+                    'status_pembayaran' => $trx->status_pembayaran,
+                    'metode_pembayaran' => $trx->metode_pembayaran,
+                    'total_nominal_pembayaran' => $trx->nominal_pendanaan,
+                ];
+            });
+            
+        return $this->successResponse($riwayat, 'Berhasil mengambil riwayat transaksi investasi.');
+    }
 }
