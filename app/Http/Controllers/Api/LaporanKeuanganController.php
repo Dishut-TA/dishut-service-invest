@@ -67,4 +67,18 @@ class LaporanKeuanganController extends Controller
         // Mengembalikan data detail laporan agar frontend bisa render PDF/Printable view
         return $this->successResponse(new LaporanKeuanganResource($laporan), 'Data laporan untuk dicetak');
     }
+
+    public function indexAdmin(Request $request): JsonResponse
+    {
+        $query = LaporanKeuangan::with(['program']);
+        
+        $laporan = $query->paginate(10);
+        return $this->successResponse(LaporanKeuanganResource::collection($laporan)->response()->getData(true), 'Berhasil mengambil daftar laporan keuangan untuk admin');
+    }
+
+    public function showAdmin(string $id): JsonResponse
+    {
+        $laporan = LaporanKeuangan::with(['program'])->findOrFail($id);
+        return $this->successResponse(new LaporanKeuanganResource($laporan), 'Berhasil mengambil detail laporan keuangan admin');
+    }
 }

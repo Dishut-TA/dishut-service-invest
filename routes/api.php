@@ -50,13 +50,31 @@ Route::middleware(['auth.jwt'])->group(function () {
         Route::post('/wallet/topup', [WalletController::class, 'topupInvestorWallet']);
     });
 
-    // === ROLE: BUPM STAFF & HEAD ===
+    // === ROLE: BUPM STAFF & HEAD (ADMIN) ===
     Route::prefix('bupm')->group(function () {
+        // Program Investasi
+        Route::get('/programs', [ProgramInvestasiController::class, 'indexAdmin']);
+        Route::get('/programs/{id}', [ProgramInvestasiController::class, 'showAdmin']);
         Route::put('/programs/{id}/verify', [VerifikasiProgramController::class, 'verify']);
+        
+        // Laporan Proyek
+        Route::get('/laporan-proyek', [LaporanProyekController::class, 'indexAdmin']);
+        Route::get('/laporan-proyek/{id}', [LaporanProyekController::class, 'showAdmin']);
         Route::put('/laporan-proyek/{id}/verify', [LaporanProyekController::class, 'verify']);
+        
+        // Laporan Keuangan
+        Route::get('/laporan-keuangan', [LaporanKeuanganController::class, 'indexAdmin']);
+        Route::get('/laporan-keuangan/{id}', [LaporanKeuanganController::class, 'showAdmin']);
         Route::get('/laporan-keuangan/{id}/cetak', [LaporanKeuanganController::class, 'cetak']);
         Route::put('/laporan-keuangan/{id}/verify', [LaporanKeuanganController::class, 'verify']);
+        
+        // Penarikan Dividen
         Route::put('/penarikan-dividen/{id}/process', [PenarikanDividenController::class, 'process']);
+
+        // Data Investor (Transaksi Pendanaan)
+        Route::get('/investor', [PendanaanController::class, 'indexAdmin']);
+        Route::get('/investor/{id}', [PendanaanController::class, 'showAdmin']);
+        Route::put('/investor/{id}/verify', [PendanaanController::class, 'verifyPendanaan']);
     });
 
 });

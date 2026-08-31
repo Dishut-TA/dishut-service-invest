@@ -63,4 +63,18 @@ class LaporanProyekController extends Controller
 
         return $this->successResponse(new LaporanProyekResource($laporan->load(['program', 'milestone', 'dokumens'])), 'Laporan progres berhasil diverifikasi.');
     }
+
+    public function indexAdmin(Request $request): JsonResponse
+    {
+        $query = LaporanProyek::with(['program', 'milestone', 'dokumens']);
+        
+        $laporan = $query->paginate(10);
+        return $this->successResponse(LaporanProyekResource::collection($laporan)->response()->getData(true), 'Berhasil mengambil daftar laporan proyek untuk admin');
+    }
+
+    public function showAdmin(string $id): JsonResponse
+    {
+        $laporan = LaporanProyek::with(['program', 'milestone', 'dokumens'])->findOrFail($id);
+        return $this->successResponse(new LaporanProyekResource($laporan), 'Berhasil mengambil detail laporan proyek admin');
+    }
 }

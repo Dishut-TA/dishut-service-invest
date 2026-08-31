@@ -23,7 +23,10 @@ class ProgramInvestasiController extends Controller
     public function index(Request $request): JsonResponse
     {
         $query = ProgramInvestasi::whereIn('status', ['ACTIVE', 'FUNDED', 'COMPLETED'])
-                    ->with(['milestones', 'dokumens']);
+                    ->with(['milestones', 'dokumens'])
+                    ->withCount(['transaksiPendanaans as jumlah_investor' => function($q) {
+                        $q->where('status_pembayaran', 'SUCCESS');
+                    }]);
         
         // Menggunakan get_object_vars / response()->getData untuk menjaga format pagination
         $collection = new ProgramInvestasiCollection($query->paginate(10));
@@ -34,7 +37,10 @@ class ProgramInvestasiController extends Controller
     {
         $userId = $request->user_id;
         $query = ProgramInvestasi::where('user_id', $userId)
-                    ->with(['milestones', 'dokumens']);
+                    ->with(['milestones', 'dokumens'])
+                    ->withCount(['transaksiPendanaans as jumlah_investor' => function($q) {
+                        $q->where('status_pembayaran', 'SUCCESS');
+                    }]);
         
         $collection = new ProgramInvestasiCollection($query->paginate(10));
         return $this->successResponse($collection->response()->getData(true), 'Berhasil mengambil daftar program KTH');
@@ -42,7 +48,11 @@ class ProgramInvestasiController extends Controller
 
     public function show(string $id): JsonResponse
     {
-        $program = ProgramInvestasi::with(['milestones', 'dokumens'])->findOrFail($id);
+        $program = ProgramInvestasi::with(['milestones', 'dokumens'])
+                    ->withCount(['transaksiPendanaans as jumlah_investor' => function($q) {
+                        $q->where('status_pembayaran', 'SUCCESS');
+                    }])
+                    ->findOrFail($id);
         return $this->successResponse(new ProgramInvestasiResource($program), 'Berhasil mengambil detail program');
     }
 
@@ -56,5 +66,26 @@ class ProgramInvestasiController extends Controller
         } catch (\Exception $e) {
             return $this->errorResponse($e->getMessage(), 500);
         }
+    }
+
+    public function indexAdmin(Request $request): JsonResponse
+    {
+        $query = ProgramInvestasi::with(['milestones', 'dokumens'])
+                    ->withCount(['transaksiPendanaans as jumlah_investor' => function($q) {
+                        $q->where('status_pembayaran', 'SUCCESS');
+                    }]);
+        
+        $collection = new ProgramInvestasiCollection($query->paginate(10));
+        return $this->successResponse($collection->response()->getData(true), 'Berhasil mengambil daftar semua program investasi untuk admin');
+    }
+
+    public function showAdmin(string $id): JsonResponse
+    {
+        $program = ProgramInvestasi::with(['milestones', 'dokumens', 'laporanProyeks', 'laporanKeuangans'])
+                    ->withCount(['transaksiPendanaans as jumlah_investor' => function($q) {
+                        $q->where('status_pembayaran', 'SUCCESS');
+                    }])
+                    ->findOrFail($id);
+        return $this->successResponse(new ProgramInvestasiResource($program), 'Berhasil mengambil detail program admin');
     }
 }

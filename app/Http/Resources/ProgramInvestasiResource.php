@@ -30,6 +30,7 @@ class ProgramInvestasiResource extends JsonResource
             'deskripsi' => $this->deskripsi,
             'status' => $this->status,
             'created_at' => $this->created_at,
+            'jumlah_investor' => $this->when(isset($this->jumlah_investor), $this->jumlah_investor, 0),
             
             // Relations
             'milestones' => $this->whenLoaded('milestones'),
