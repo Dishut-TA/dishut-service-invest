@@ -55,6 +55,7 @@ class PendanaanController extends Controller
             ->get()
             ->map(function ($trx) {
                 return [
+                    'id' => $trx->id,
                     'tanggal_bayar' => $trx->tanggal_bayar,
                     'nama_investor' => $trx->nama,
                     'nama_program_investasi' => $trx->program->nama_program ?? null,
