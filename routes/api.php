@@ -34,7 +34,9 @@ Route::middleware(['auth.jwt'])->group(function () {
         Route::post('/programs', [ProgramInvestasiController::class, 'store']);
         
         Route::post('/laporan-proyek', [LaporanProyekController::class, 'store']);
+        Route::get('/laporan-proyek', [LaporanProyekController::class, 'indexAdmin']);
         Route::post('/laporan-keuangan', [LaporanKeuanganController::class, 'store']);
+        Route::get('/laporan-keuangan', [LaporanKeuanganController::class, 'indexAdmin']);
         
         Route::get('/wallet', [WalletController::class, 'showKthWallet']);
         Route::post('/wallet/topup', [WalletController::class, 'topupKthWallet']);
