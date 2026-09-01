@@ -8,6 +8,7 @@ use App\Http\Requests\VerifyLaporanKeuanganRequest;
 use App\Http\Resources\LaporanKeuanganResource;
 use App\Models\LaporanKeuangan;
 use App\Services\DividenCalculatorService;
+use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Traits\ApiResponse;
 

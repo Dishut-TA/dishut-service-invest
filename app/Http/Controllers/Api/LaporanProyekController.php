@@ -7,6 +7,7 @@ use App\Http\Requests\StoreLaporanProyekRequest;
 use App\Http\Requests\VerifyLaporanProyekRequest;
 use App\Http\Resources\LaporanProyekResource;
 use App\Models\LaporanProyek;
+use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use App\Traits\ApiResponse;
