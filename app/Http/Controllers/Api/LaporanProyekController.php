@@ -52,6 +52,46 @@ class LaporanProyekController extends Controller
         }
     }
 
+    public function update(StoreLaporanProyekRequest $request, string $id): JsonResponse
+    {
+        try {
+            $data = $request->validated();
+            
+            $laporan = DB::transaction(function () use ($data, $id) {
+                $lap = LaporanProyek::findOrFail($id);
+                
+                $program = \App\Models\ProgramInvestasi::findOrFail($data['program_id']);
+                $previousLaporan = \App\Models\LaporanProyek::where('program_id', $data['program_id'])
+                    ->where('created_at', '<', $lap->created_at)
+                    ->orderBy('created_at', 'desc')
+                    ->first();
+                
+                $saldoAwal = $previousLaporan ? $previousLaporan->sisa_dana : $program->dana_terkumpul;
+                $sisaDana = $saldoAwal - $data['dana_terpakai'];
+
+                $lap->update([
+                    'program_id' => $data['program_id'],
+                    'milestone_id' => $data['milestone_id'] ?? null,
+                    'deskripsi_kemajuan' => $data['deskripsi_kemajuan'],
+                    'dana_terpakai' => $data['dana_terpakai'],
+                    'sisa_dana' => $sisaDana,
+                    'status_verifikasi' => 'PENDING',
+                ]);
+                
+                if (!empty($data['dokumens'])) {
+                    $lap->dokumens()->delete();
+                    $lap->dokumens()->createMany($data['dokumens']);
+                }
+                
+                return $lap->load(['program', 'milestone', 'dokumens']);
+            });
+            
+            return $this->successResponse(new LaporanProyekResource($laporan), 'Laporan progres berhasil diperbarui.');
+        } catch (\Exception $e) {
+            return $this->errorResponse($e->getMessage(), 500);
+        }
+    }
+
     public function verify(VerifyLaporanProyekRequest $request, string $id): JsonResponse
     {
         $laporan = LaporanProyek::findOrFail($id);

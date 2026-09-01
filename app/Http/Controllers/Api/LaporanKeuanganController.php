@@ -35,6 +35,22 @@ class LaporanKeuanganController extends Controller
         return $this->successResponse(new LaporanKeuanganResource($laporan), 'Laporan keuangan berhasil dikirim.', 201);
     }
 
+    public function update(StoreLaporanKeuanganRequest $request, string $id): JsonResponse
+    {
+        $laporan = LaporanKeuangan::findOrFail($id);
+        $data = $request->validated();
+        
+        $sumPendapatan = collect($data['total_pendapatan'])->sum('nominal');
+        $sumPengeluaran = collect($data['total_pengeluaran'])->sum('nominal');
+        
+        $data['laba_bersih'] = $sumPendapatan - $sumPengeluaran;
+        $data['status_verifikasi'] = 'PENDING'; // reset status ke PENDING jika direvisi
+        
+        $laporan->update($data);
+        
+        return $this->successResponse(new LaporanKeuanganResource($laporan), 'Laporan keuangan berhasil diperbarui.');
+    }
+
     public function verify(VerifyLaporanKeuanganRequest $request, string $id): JsonResponse
     {
         $laporan = LaporanKeuangan::with(['program'])->findOrFail($id);
