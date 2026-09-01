@@ -43,7 +43,7 @@ class DividenCalculatorService
                 'total_laba_bersih' => $laporan->laba_bersih,
                 'porsi_kth' => $porsiKth,
                 'porsi_investor' => $porsiInvestor,
-                'status_distribusi' => 'COMPLETED',
+                'status_distribusi' => 'DISTRIBUTED',
                 'tanggal_distribusi' => now(),
             ]);
 
