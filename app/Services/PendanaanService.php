@@ -42,6 +42,7 @@ class PendanaanService
             'nominal_pendanaan' => $data['nominal_pendanaan'],
             'persentase_kepemilikan' => $persentase,
             'status_pembayaran' => 'PENDING',
+            'status_persetujuan' => 'MENUNGGU',
             'metode_pembayaran' => $data['metode_pembayaran'],
         ]);
     }

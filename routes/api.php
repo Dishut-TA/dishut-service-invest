@@ -10,6 +10,8 @@ use App\Http\Controllers\Api\LaporanKeuanganController;
 use App\Http\Controllers\Api\PenarikanDividenController;
 use App\Http\Controllers\Api\WalletController;
 
+use App\Http\Controllers\Api\PersetujuanInvestorController;
+
 // ---------------------------------------------------------
 // PUBLIC / CATALOG ROUTES
 // ---------------------------------------------------------
@@ -44,6 +46,11 @@ Route::middleware(['auth.jwt'])->group(function () {
         
         Route::get('/wallet', [WalletController::class, 'showKthWallet']);
         Route::post('/wallet/topup', [WalletController::class, 'topupKthWallet']);
+        
+        // Persetujuan Investor
+        Route::get('/persetujuan-investor', [PersetujuanInvestorController::class, 'index']);
+        Route::get('/persetujuan-investor/{id}', [PersetujuanInvestorController::class, 'show']);
+        Route::put('/persetujuan-investor/{id}/status', [PersetujuanInvestorController::class, 'updateStatus']);
     });
 
     // === ROLE: INVESTOR ===
@@ -54,6 +61,12 @@ Route::middleware(['auth.jwt'])->group(function () {
         Route::post('/penarikan-dividen', [PenarikanDividenController::class, 'store']);
         Route::get('/wallet', [WalletController::class, 'showInvestorWallet']);
         Route::post('/wallet/topup', [WalletController::class, 'topupInvestorWallet']);
+        
+        // Laporan
+        Route::get('/laporan-proyek', [LaporanProyekController::class, 'indexInvestor']);
+        Route::get('/laporan-proyek/{id}', [LaporanProyekController::class, 'showInvestor']);
+        Route::get('/laporan-keuangan', [LaporanKeuanganController::class, 'indexInvestor']);
+        Route::get('/laporan-keuangan/{id}', [LaporanKeuanganController::class, 'showInvestor']);
     });
 
     // === ROLE: BUPM STAFF & HEAD (ADMIN) ===

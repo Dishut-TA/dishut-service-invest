@@ -118,4 +118,34 @@ class LaporanProyekController extends Controller
         $laporan = LaporanProyek::with(['program', 'milestone', 'dokumens'])->findOrFail($id);
         return $this->successResponse(new LaporanProyekResource($laporan), 'Berhasil mengambil detail laporan proyek admin');
     }
+
+    public function indexInvestor(Request $request): JsonResponse
+    {
+        $investorId = $request->user_id; // Dari middleware
+
+        $query = LaporanProyek::with(['program', 'milestone', 'dokumens'])
+            ->whereHas('program.transaksiPendanaans', function ($q) use ($investorId) {
+                $q->where('investor_id', $investorId)
+                  ->whereIn('status_pembayaran', ['SUCCESS', 'PAID']);
+            })
+            ->where('status_verifikasi', 'VERIFIED');
+        
+        $laporan = $query->orderBy('created_at', 'desc')->paginate(10);
+        return $this->successResponse(LaporanProyekResource::collection($laporan)->response()->getData(true), 'Berhasil mengambil daftar laporan proyek untuk investor');
+    }
+
+    public function showInvestor(Request $request, string $id): JsonResponse
+    {
+        $investorId = $request->user_id;
+
+        $laporan = LaporanProyek::with(['program', 'milestone', 'dokumens'])
+            ->whereHas('program.transaksiPendanaans', function ($q) use ($investorId) {
+                $q->where('investor_id', $investorId)
+                  ->whereIn('status_pembayaran', ['SUCCESS', 'PAID']);
+            })
+            ->where('status_verifikasi', 'VERIFIED')
+            ->findOrFail($id);
+
+        return $this->successResponse(new LaporanProyekResource($laporan), 'Berhasil mengambil detail laporan proyek untuk investor');
+    }
 }

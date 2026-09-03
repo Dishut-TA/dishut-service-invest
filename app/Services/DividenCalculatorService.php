@@ -73,6 +73,13 @@ class DividenCalculatorService
                     );
                     
                     $investorWallet->increment('saldo_dividen', $dividenInvestorIni);
+                    
+                    $investorWallet->mutasis()->create([
+                        'referensi_id' => $pembagian->id,
+                        'tipe_mutasi' => 'KREDIT',
+                        'nominal' => $dividenInvestorIni,
+                        'keterangan' => "Bagi hasil dividen dari Program: {$program->nama_program}"
+                    ]);
                 }
             }
 

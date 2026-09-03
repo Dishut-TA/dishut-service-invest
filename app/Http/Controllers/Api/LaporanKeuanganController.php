@@ -98,4 +98,34 @@ class LaporanKeuanganController extends Controller
         $laporan = LaporanKeuangan::with(['program'])->findOrFail($id);
         return $this->successResponse(new LaporanKeuanganResource($laporan), 'Berhasil mengambil detail laporan keuangan admin');
     }
+
+    public function indexInvestor(Request $request): JsonResponse
+    {
+        $investorId = $request->user_id; // Dari middleware
+
+        $query = LaporanKeuangan::with(['program'])
+            ->whereHas('program.transaksiPendanaans', function ($q) use ($investorId) {
+                $q->where('investor_id', $investorId)
+                  ->whereIn('status_pembayaran', ['SUCCESS', 'PAID']);
+            })
+            ->where('status_verifikasi', 'VERIFIED');
+        
+        $laporan = $query->orderBy('created_at', 'desc')->paginate(10);
+        return $this->successResponse(LaporanKeuanganResource::collection($laporan)->response()->getData(true), 'Berhasil mengambil daftar laporan keuangan untuk investor');
+    }
+
+    public function showInvestor(Request $request, string $id): JsonResponse
+    {
+        $investorId = $request->user_id;
+
+        $laporan = LaporanKeuangan::with(['program'])
+            ->whereHas('program.transaksiPendanaans', function ($q) use ($investorId) {
+                $q->where('investor_id', $investorId)
+                  ->whereIn('status_pembayaran', ['SUCCESS', 'PAID']);
+            })
+            ->where('status_verifikasi', 'VERIFIED')
+            ->findOrFail($id);
+
+        return $this->successResponse(new LaporanKeuanganResource($laporan), 'Berhasil mengambil detail laporan keuangan untuk investor');
+    }
 }

@@ -20,6 +20,7 @@ class TransaksiPendanaan extends Model
         'nominal_pendanaan',
         'persentase_kepemilikan',
         'status_pembayaran',
+        'status_persetujuan',
         'metode_pembayaran',
         'bukti_transfer_url',
         'dokumen_url',
